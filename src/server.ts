@@ -6,7 +6,7 @@ dotenv.config();
 const app = express();
 const port = 8000;
 const apiUrl = new URL('https://api.themoviedb.org/3/search/multi');
-
+//
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
