@@ -11,8 +11,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/search', async (req: Request, res: Response) => {
-  //console.log(req.query.query, 'xsxsx'); //////////
-
   try {
     const apiUrl = new URL('https://api.themoviedb.org/3/search/multi');
     apiUrl.searchParams.append('query', req.query.query as string);
@@ -27,7 +25,6 @@ app.get('/search', async (req: Request, res: Response) => {
     apiUrl.searchParams.append('page', (req.query.page as string) || '1');
     apiUrl.searchParams.append('api_key', process.env.TMDB_API_KEY!);
 
-    console.log(apiUrl.toString(), 'dcdcdc,,,');
     const response = await fetch(apiUrl.toString());
 
     if (!response.ok) {
@@ -39,7 +36,7 @@ app.get('/search', async (req: Request, res: Response) => {
     const fiteredData = data.results.map((item: any) => {
       return {
         id: item.id,
-        type: item.media_type,
+        type: item.media_type !== 'tv' ? 'movie' : 'tv',
         title: !item.title ? item.name : item.title,
         release_date: !item.release_date
           ? item.first_air_date
@@ -47,7 +44,6 @@ app.get('/search', async (req: Request, res: Response) => {
       };
     });
 
-    console.log(data);
     res.json({ data: fiteredData });
   } catch (error) {
     console.log(error);

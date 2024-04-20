@@ -17,7 +17,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 app.get('/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //console.log(req.query.query, 'xsxsx'); //////////
     try {
         const apiUrl = new URL('https://api.themoviedb.org/3/search/multi');
         apiUrl.searchParams.append('query', req.query.query);
@@ -25,7 +24,6 @@ app.get('/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         apiUrl.searchParams.append('language', req.query.language || 'en-US');
         apiUrl.searchParams.append('page', req.query.page || '1');
         apiUrl.searchParams.append('api_key', process.env.TMDB_API_KEY);
-        console.log(apiUrl.toString(), 'dcdcdc,,,');
         const response = yield fetch(apiUrl.toString());
         if (!response.ok) {
             throw new Error('Failed to fetch data from TMDB API');
@@ -34,14 +32,13 @@ app.get('/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const fiteredData = data.results.map((item) => {
             return {
                 id: item.id,
-                type: item.media_type,
+                type: item.media_type !== 'tv' ? 'movie' : 'tv',
                 title: !item.title ? item.name : item.title,
                 release_date: !item.release_date
                     ? item.first_air_date
                     : item.release_date,
             };
         });
-        console.log(data);
         res.json({ data: fiteredData });
     }
     catch (error) {
