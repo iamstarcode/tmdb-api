@@ -75,6 +75,30 @@ app.get('/tv/:id', async (req, res) => {
   }
 });
 
+app.get('/movie/:id', async (req, res) => {
+  const { id } = req.params;
+  const apiUrl = new URL(`https://api.themoviedb.org/3/movie/${id}`);
+  apiUrl.searchParams.append('api_key', process.env.TMDB_API_KEY!);
+  apiUrl.searchParams.append('append_to_response', 'external_ids');
+
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.get('/tv/:tvId/season/:seasonNumber', async (req, res) => {
   try {
     const { tvId, seasonNumber } = req.params;

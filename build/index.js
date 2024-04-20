@@ -65,6 +65,25 @@ app.get('/tv/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }));
+app.get('/movie/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const apiUrl = new URL(`https://api.themoviedb.org/3/movie/${id}`);
+    apiUrl.searchParams.append('api_key', process.env.TMDB_API_KEY);
+    apiUrl.searchParams.append('append_to_response', 'external_ids');
+    try {
+        const response = yield fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = yield response.json();
+        console.log(data);
+        res.json(data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}));
 app.get('/tv/:tvId/season/:seasonNumber', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { tvId, seasonNumber } = req.params;
